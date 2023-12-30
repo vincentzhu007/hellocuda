@@ -1,0 +1,1 @@
+运行任意sgemm程序前，请先执行：`python data/gen_data.py`，生成测试数据。
