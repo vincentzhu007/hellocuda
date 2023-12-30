@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include "cuda_utils.h"
+#include "data.h"
 
 bool allclose(float *a_ptr, float *b_ptr, size_t n_elem) {
     constexpr float kErrorUpLimit = 1e-4;
@@ -77,9 +78,9 @@ int main() {
     size_t size_z = sizeof(float) * m * n;
 
     // 设置host侧数据
-    float * host_ptr_x = read_bin("/home/zgd/code/cuda/hellocuda/sgemm/data/sgemm_m_512_k_512_n_512_x.bin", size_x);
-    float * host_ptr_y = read_bin("/home/zgd/code/cuda/hellocuda/sgemm/data/sgemm_m_512_k_512_n_512_y.bin", size_y);
-    float * expected_z = read_bin("/home/zgd/code/cuda/hellocuda/sgemm/data/sgemm_m_512_k_512_n_512_z.bin", size_z);
+    float * host_ptr_x = read_bin(kDataDir + "/sgemm_m_512_k_512_n_512_x.bin", size_x);
+    float * host_ptr_y = read_bin(kDataDir + "/sgemm_m_512_k_512_n_512_y.bin", size_y);
+    float * expected_z = read_bin(kDataDir + "/sgemm_m_512_k_512_n_512_z.bin", size_z);
     float * host_ptr_z = (float *)malloc(size_z);
 
     // 设置device侧数据
