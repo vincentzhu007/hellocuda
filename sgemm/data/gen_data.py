@@ -25,3 +25,5 @@ if __name__ == '__main__':
     saved_dir = sys.path[0]
     gen_and_save(512, 512, 512, saved_dir)
     gen_and_save(1024, 1024, 1024, saved_dir)
+    gen_and_save(2048, 2048, 2048, saved_dir)
+    gen_and_save(4096, 4096, 4096, saved_dir)

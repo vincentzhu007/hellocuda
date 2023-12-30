@@ -4,15 +4,18 @@
 #include "cuda_utils.h"
 #include "data.h"
 
-__global__ void sgemm_naive(int m, int k, int n, const float *x, const float *y, float *z) {
-    int mi = blockIdx.x;
-    int ni = threadIdx.x;
+template<int BLOCK>
+__global__ void sgemm(int m, int k, int n, const float *x, const float *y, float *z) {
+    int mi = blockIdx.x * BLOCK + threadIdx.x;
+    int ni = blockIdx.y * BLOCK + threadIdx.y;
 
-    double out = 0.0f;
-    for (int s = 0; s < k; s++) {
-        out += x[mi * k + s] * y[s * n + ni];
+    if ((mi < m) && (ni < n)) {
+        double out = 0.0f;
+        for (int s = 0; s < k; s++) {
+            out += x[mi * k + s] * y[s * n + ni];
+        }
+        z[mi * n + ni] = out; 
     }
-    z[mi * n + ni] = out; 
 }
 
 int main() {
@@ -45,9 +48,10 @@ int main() {
     HANDLE_ERROR(cudaMemcpy(device_ptr_y, host_ptr_y, size_y, cudaMemcpyHostToDevice));
     
     // 计算matmul
-    dim3 block(kDim);
-    dim3 grid(kDim);
-    sgemm_naive<<<grid, block>>>(m, k, n, device_ptr_x, device_ptr_y, device_ptr_z);
+    constexpr int kBLOCK = 16;
+    dim3 block(kBLOCK, kBLOCK);
+    dim3 grid(CEIL_DIV(m, kBLOCK), CEIL_DIV(n, kBLOCK));
+    sgemm<kBLOCK><<<grid, block>>>(m, k, n, device_ptr_x, device_ptr_y, device_ptr_z);
     HANDLE_ERROR(cudaMemcpy(host_ptr_z, device_ptr_z, size_z, cudaMemcpyDeviceToHost));
 
     HANDLE_ERROR(cudaFree(device_ptr_x));
