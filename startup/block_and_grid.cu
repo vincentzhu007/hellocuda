@@ -1,6 +1,8 @@
-#include <cstdio>
+#include <stdio.h>
 
 __global__ void CheckIndex(void) {
+  // cuda内置的变量：threadIdx、blockIdx、blockDim、gridDim。
+  // 可用于在kernel内获取上下文信息。
   printf("Device: threadIdx:(%d, %d, %d), blockIdx:(%d, %d, %d), "
          "blockDim:(%d, %d, %d), gridDim:(%d, %d, %d)\n",
          threadIdx.x, threadIdx.y, threadIdx.z, blockIdx.x, blockIdx.y, blockIdx.z,
@@ -18,7 +20,9 @@ int main() {
   printf("Host: block:(%d, %d, %d), grid:(%d, %d, %d)\n\n",
          block.x, block.y, block.z, grid.x, grid.y, grid.z);
 
+  // 调用kernel函数
   CheckIndex<<<grid, block>>>();
+
+  // 执行同步操作，等待kernel完全执行结束。注意，没有这一行，终端中不会打印kernel printf内容！
   cudaDeviceSynchronize();
-  cudaDeviceReset();
 }

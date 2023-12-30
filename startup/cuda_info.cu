@@ -17,9 +17,9 @@ void printCudaProp(const struct cudaDeviceProp &prop) {
     std::cout << std::setw(40) << "max thread per block " << prop.maxThreadsPerBlock << std::endl;
     std::cout << std::setw(40) << "max blocks per multi-processor: "
         << prop.maxBlocksPerMultiProcessor << std::endl;
-    std::cout << std::setw(40) << "max grid size: [" << prop.maxGridSize[0]
+    std::cout << std::setw(40) << "max grid size: " << "[" << prop.maxGridSize[0]
         << ", " << prop.maxGridSize[1] << ", " << prop.maxGridSize[2] << "]" << std::endl;
-    std::cout << std::setw(40) << "max thread dim: [" << prop.maxThreadsDim[0]
+    std::cout << std::setw(40) << "max thread dim: " << "[" << prop.maxThreadsDim[0]
         << ", " << prop.maxThreadsDim[1] << ", " << prop.maxThreadsDim[2] << "]" << std::endl;
 
     std::cout << std::setw(40) << "device overlap: " << prop.deviceOverlap << std::endl;
