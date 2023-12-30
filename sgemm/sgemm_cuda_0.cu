@@ -52,7 +52,7 @@ float *read_bin(const std::string &file, size_t size) {
     float *buffer = (float *)malloc(size);
     std::ifstream in(file, std::ios::in | std::ios::binary);
     in.read((char *)buffer, size);
-    printf("read %d bytes from %s.\n", in.gcount(), file.c_str());
+    printf("read %d bytes from %s.\n", (int)in.gcount(), file.c_str());
     return buffer;
 }
 
@@ -68,7 +68,7 @@ __global__ void sgemm_naive(int m, int k, int n, const float *x, const float *y,
 }
 
 int main() {
-    constexpr int kDim = 512;
+    constexpr int kDim = 1024;
     int m = kDim;
     int k = kDim;
     int n = kDim;
@@ -78,9 +78,10 @@ int main() {
     size_t size_z = sizeof(float) * m * n;
 
     // 设置host侧数据
-    float * host_ptr_x = read_bin(kDataDir + "/sgemm_m_512_k_512_n_512_x.bin", size_x);
-    float * host_ptr_y = read_bin(kDataDir + "/sgemm_m_512_k_512_n_512_y.bin", size_y);
-    float * expected_z = read_bin(kDataDir + "/sgemm_m_512_k_512_n_512_z.bin", size_z);
+    std::string bin_prefix = kDataDir + "/sgemm_m_" + std::to_string(m) + "_k_" + std::to_string(k) + "_n_" + std::to_string(n);
+    float * host_ptr_x = read_bin(bin_prefix +"_x.bin", size_x);
+    float * host_ptr_y = read_bin(bin_prefix +"_y.bin", size_y);
+    float * expected_z = read_bin(bin_prefix +"_z.bin", size_z);
     float * host_ptr_z = (float *)malloc(size_z);
 
     // 设置device侧数据
@@ -112,8 +113,7 @@ int main() {
     print_array(expected_z, m * n);
 
     bool is_equal = allclose(host_ptr_z, expected_z, m * n);
-    printf("accuracy checking result: %s.\n", (is_equal ? "PASS" : "NOT PASS!!!"));
-
+    printf("\nAccuracy checking result: %s.\n", (is_equal ? "PASS" : "NOT PASS!!!"));
 
     free(host_ptr_x);
     free(host_ptr_y);
